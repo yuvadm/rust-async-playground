@@ -11,10 +11,24 @@ enum Poll<T> {
     Pending,
 }
 
+pub struct RandomFuture {}
+
+impl SimpleFuture for RandomFuture {
+    type Output = f64;
+    fn poll(&mut self, _wake: fn()) -> Poll<Self::Output> {
+        let mut rng = rand::thread_rng();
+        let y: f64 = rng.gen();
+        if y > 0.9 {
+            Poll::Ready(y)
+        } else {
+            // probably need to utilize wake() here
+            Poll::Pending
+        }
+    }
+}
+
 async fn hello_world() {
-    let mut rng = rand::thread_rng();
-    let y: f64 = rng.gen();
-    println!("hello, world! {}", y);
+    println!("hello, world!");
 }
 
 fn main() {

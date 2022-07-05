@@ -20,6 +20,7 @@ https://github.com/tokio-rs/async-stream
 
 This page has a good review https://blog.yoshuawuyts.com/rust-streams/
 
+More good stuff at https://www.qovery.com/blog/a-guided-tour-of-streams-in-rust
 
 ## Design
 

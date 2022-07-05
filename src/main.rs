@@ -36,7 +36,19 @@ fn number_source() -> impl Stream<Item = u8> {
     }
 }
 
-fn double<S: Stream<Item = u8>>(input: S) -> impl Stream<Item = u8> {
+struct NumberSource {
+    i: u32,
+}
+
+impl Stream for NumberSource {
+    type Item = u32;
+    fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+        self.i += 1;
+        Poll::Ready(Some(self.i))
+    }
+}
+
+fn double<S: Stream<Item = u32>>(input: S) -> impl Stream<Item = u32> {
     stream! {
         for await val in input {
             yield val * 2
@@ -46,7 +58,8 @@ fn double<S: Stream<Item = u8>>(input: S) -> impl Stream<Item = u8> {
 
 #[tokio::main]
 async fn main() {
-    let s = double(number_source());
+    let number_source = NumberSource { i: 0 };
+    let s = double(number_source);
     pin_mut!(s); // needed for iteration
 
     while let Some(value) = s.next().await {

@@ -19,7 +19,7 @@ impl Future for Delay {
         if Instant::now() >= self.when {
             Poll::Ready("done")
         } else {
-            // Ignore this line for now.
+            // Ignore this line for now. (this possibly busy waits?)
             cx.waker().wake_by_ref();
             Poll::Pending
         }

@@ -1,38 +1,19 @@
-use futures::executor::block_on;
-use rand::prelude::*;
+use async_stream::stream;
 
-trait SimpleFuture {
-    type Output;
-    fn poll(&mut self, wake: fn()) -> Poll<Self::Output>;
-}
+use futures_util::pin_mut;
+use futures_util::stream::StreamExt;
 
-enum Poll<T> {
-    Ready(T),
-    Pending,
-}
-
-pub struct RandomFuture {}
-
-impl SimpleFuture for RandomFuture {
-    type Output = f64;
-    fn poll(&mut self, _wake: fn()) -> Poll<Self::Output> {
-        let mut rng = rand::thread_rng();
-        let y: f64 = rng.gen();
-        println!("y value {}", y);
-        if y > 0.9 {
-            Poll::Ready(y)
-        } else {
-            // probably need to utilize wake() here
-            Poll::Pending
+#[tokio::main]
+async fn main() {
+    let s = stream! {
+        for i in 0..3 {
+            yield i;
         }
+    };
+
+    pin_mut!(s); // needed for iteration
+
+    while let Some(value) = s.next().await {
+        println!("got {}", value);
     }
-}
-
-async fn hello_world() {
-    println!("hello, world!");
-}
-
-fn main() {
-    let future = hello_world();
-    block_on(future);
 }

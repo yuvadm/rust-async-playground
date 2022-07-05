@@ -12,3 +12,8 @@ https://docs.rs/futures/0.3.6/futures/stream/trait.Stream.html
 
 This is the relevant chapter in the Rust Async Book - https://rust-lang.github.io/async-book/05_streams/02_iteration_and_concurrency.html
 
+Meanwhile it seems some features aren't fully stable in Rust just yet. Some crates provide relevant functionality
+
+https://github.com/taiki-e/futures-async-stream
+
+https://github.com/tokio-rs/async-stream

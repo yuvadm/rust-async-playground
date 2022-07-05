@@ -1,5 +1,7 @@
 use async_stream::stream;
 
+use futures::stream::Stream;
+
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 
@@ -26,18 +28,25 @@ impl Future for Delay {
     }
 }
 
+fn number_source() -> impl Stream<Item = u8> {
+    stream! {
+        for i in 0..10 {
+            yield i
+        }
+    }
+}
+
+fn double<S: Stream<Item = u8>>(input: S) -> impl Stream<Item = u8> {
+    stream! {
+        for await val in input {
+            yield val * 2
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() {
-    let s = stream! {
-        let mut when = Instant::now();
-        for i in 0..10 {
-            let delay = Delay { when };
-            delay.await;
-            yield i;
-            when += Duration::from_millis(1000);
-        }
-    };
-
+    let s = double(number_source());
     pin_mut!(s); // needed for iteration
 
     while let Some(value) = s.next().await {

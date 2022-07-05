@@ -17,3 +17,10 @@ Meanwhile it seems some features aren't fully stable in Rust just yet. Some crat
 https://github.com/taiki-e/futures-async-stream
 
 https://github.com/tokio-rs/async-stream
+
+This page has a good review https://blog.yoshuawuyts.com/rust-streams/
+
+
+## Design
+
+Each block processes input and out asynchronously.

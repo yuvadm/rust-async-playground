@@ -18,6 +18,7 @@ impl SimpleFuture for RandomFuture {
     fn poll(&mut self, _wake: fn()) -> Poll<Self::Output> {
         let mut rng = rand::thread_rng();
         let y: f64 = rng.gen();
+        println!("y value {}", y);
         if y > 0.9 {
             Poll::Ready(y)
         } else {

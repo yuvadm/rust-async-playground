@@ -17,7 +17,6 @@ impl Future for Delay {
 
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<&'static str> {
         if Instant::now() >= self.when {
-            println!("Hello world");
             Poll::Ready("done")
         } else {
             // Ignore this line for now.

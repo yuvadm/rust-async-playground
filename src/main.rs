@@ -30,7 +30,7 @@ impl Future for Delay {
 async fn main() {
     let s = stream! {
         let mut when = Instant::now();
-        for i in 0..3 {
+        for i in 0..10 {
             let delay = Delay { when };
             delay.await;
             yield i;

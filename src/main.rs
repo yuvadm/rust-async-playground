@@ -71,13 +71,18 @@ fn double<S: Stream<Item = u32>>(input: S) -> impl Stream<Item = u32> {
     }
 }
 
+fn print_sink<S: Stream<Item = u32>>(input: S) -> impl Stream<Item = ()> {
+    stream! {
+        for await val in input {
+            print!("{}", val);
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() {
     let number_source = NumberSource { i: 0 };
-    let s = double(number_source);
+    let s = print_sink(double(number_source));
     pin_mut!(s); // needed for iteration
-
-    while let Some(value) = s.next().await {
-        println!("got {}", value);
-    }
+    s.next().await;
 }

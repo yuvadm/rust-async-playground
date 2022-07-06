@@ -42,9 +42,24 @@ struct NumberSource {
 
 impl Stream for NumberSource {
     type Item = u32;
-    fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+    fn poll_next(mut self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
         self.i += 1;
         Poll::Ready(Some(self.i))
+    }
+}
+
+struct RandomSource {
+    seed: u32,
+    modulus: u32,
+    a: u32,
+    c: u32,
+}
+
+impl Stream for RandomSource {
+    type Item = u32;
+    fn poll_next(mut self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+        self.seed = (self.a * self.seed + self.c) % self.modulus;
+        Poll::Ready(Some(self.seed))
     }
 }
 

@@ -1,14 +1,22 @@
+use bytes::Bytes;
+
 use async_stream::stream;
 
 use futures::stream::Stream;
 
 use futures_util::pin_mut;
-use futures_util::stream::StreamExt;
+// use futures_util::stream::StreamExt;
 
 use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
-use std::time::{Duration, Instant};
+use std::time::Instant;
+
+use tokio::fs::File;
+// use std::fs::File;
+use tokio::io::BufReader;
+use tokio_stream::StreamExt;
+use tokio_util::io::ReaderStream;
 
 struct Delay {
     when: Instant,
@@ -79,10 +87,26 @@ fn print_sink<S: Stream<Item = u32>>(input: S) -> impl Stream<Item = ()> {
     }
 }
 
+async fn file_source() -> impl Stream<Item = u32> {
+    stream! {
+        let f = File::open("/home/yuval/dev/rustradio-docs/src/background.md").await.unwrap();
+        let s = ReaderStream::new(f);
+        loop {
+            yield "4".as_bytes()[0] as u32
+        }
+        // loop {
+        //     let val = s.next().await.unwrap();
+        //     // yield val
+        //     yield Bytes::new()
+        // }
+    }
+}
+
 #[tokio::main]
 async fn main() {
-    let number_source = NumberSource { i: 0 };
-    let s = print_sink(double(number_source));
+    // let number_source = NumberSource { i: 0 };
+    // let s = print_sink(double(number_source));
+    let s = print_sink(file_source().await);
     pin_mut!(s); // needed for iteration
     s.next().await;
 }
